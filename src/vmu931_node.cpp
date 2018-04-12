@@ -21,13 +21,29 @@ bool all_equal(std::initializer_list<T> ilist)
     }
 }
 
-ros::Time create_time_stamp(uint32_t ts)
+class TimeCache
 {
-    ros::Time t;
-    t.sec = ts / 1000;
-    t.nsec = (ts % 1000) * 1000 * 1000;
-    return t;
-}
+public:
+    TimeCache() :
+        TimeCache(0) {}
+
+    TimeCache(uint32_t device_time) :
+        m_device_time(device_time), m_ros_time(ros::Time::now()) {}
+
+    const ros::Time& look_up(uint32_t device_time)
+    {
+        if (device_time != m_device_time) {
+            m_device_time = device_time;
+            m_ros_time = ros::Time::now();
+        }
+
+        return m_ros_time;
+    }
+
+private:
+    uint32_t m_device_time;
+    ros::Time m_ros_time;
+};
 
 class DeviceThread
 {
@@ -105,7 +121,7 @@ private:
         m_imu_msg.orientation.y = m_sensor_quat.y;
         m_imu_msg.orientation.z = m_sensor_quat.z;
 
-        m_imu_msg.header.stamp = create_time_stamp(m_sensor_quat.timestamp);
+        m_imu_msg.header.stamp = m_time_cache.look_up(m_sensor_quat.timestamp);
         m_publisher_imu.publish(m_imu_msg);
     }
 
@@ -116,7 +132,7 @@ private:
         m_mf_msg.magnetic_field.y = m_sensor_magneto.y * 1000.0 * 1000.0;
         m_mf_msg.magnetic_field.z = m_sensor_magneto.z * 1000.0 * 1000.0;
 
-        m_mf_msg.header.stamp = create_time_stamp(m_sensor_magneto.timestamp);
+        m_mf_msg.header.stamp = m_time_cache.look_up(m_sensor_magneto.timestamp);
         m_publisher_mf.publish(m_mf_msg);
     }
 
@@ -132,6 +148,7 @@ private:
     sensor_msgs::MagneticField m_mf_msg;
     const ros::Publisher& m_publisher_imu;
     const ros::Publisher& m_publisher_mf;
+    TimeCache m_time_cache;
 };
 
 int main(int argc, char** argv)
