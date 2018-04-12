@@ -32,11 +32,14 @@ ros::Time create_time_stamp(uint32_t ts)
 class DeviceThread
 {
 public:
-    DeviceThread(const std::string& device_name, const ros::Publisher& pub_imu, const ros::Publisher& pub_mf) :
+    DeviceThread(const std::string& device_name, const std::string& frame_id,
+            const ros::Publisher& pub_imu, const ros::Publisher& pub_mf) :
         m_sensor(boost::asio::serial_port(m_io_service, device_name)),
         m_publisher_imu(pub_imu), m_publisher_mf(pub_mf)
     {
         // TODO set covariance matrices (consult VMU931 user guide and maybe own measurements)
+        m_imu_msg.header.frame_id = frame_id;
+        m_mf_msg.header.frame_id = frame_id;
     }
 
     void run()
@@ -145,9 +148,13 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    std::string frame_id;
+    nh_private.getParam("frame_id", frame_id);
+    ROS_INFO("Using frame_id '%s' in published messages", frame_id.c_str());
+
     ros::Publisher pub_imu = nh.advertise<sensor_msgs::Imu>("imu", 50);
     ros::Publisher pub_mf = nh.advertise<sensor_msgs::MagneticField>("mf", 50);
-    DeviceThread vmu(device_name, pub_imu, pub_mf);
+    DeviceThread vmu(device_name, frame_id, pub_imu, pub_mf);
 
     vmu.run();
     ros::spin();
