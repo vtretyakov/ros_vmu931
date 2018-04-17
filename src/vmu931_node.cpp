@@ -9,16 +9,15 @@
 #include <thread>
 
 template<typename T>
-bool all_equal(std::initializer_list<T> ilist)
+constexpr bool all_equal(const T& first, const T& second)
 {
-    if (ilist.size() >  1) {
-        auto first = ilist.begin();
-        return std::all_of(std::next(first), ilist.end(), [first](const T& current) {
-            return *first == current;
-        });
-    } else {
-        return true;
-    }
+    return first == second;
+}
+
+template<typename T, typename... Args>
+constexpr bool all_equal(const T& first, const T& second, const Args&... args)
+{
+    return first == second ? all_equal(second, args...) : false;
 }
 
 class TimeCache
@@ -100,7 +99,7 @@ public:
 private:
     void publish_imu()
     {
-        if (!all_equal({m_sensor_accel.timestamp, m_sensor_gyro.timestamp, m_sensor_quat.timestamp})) {
+        if (!all_equal(m_sensor_accel.timestamp, m_sensor_gyro.timestamp, m_sensor_quat.timestamp)) {
             // only publish consistent IMU messages, i.e. from same time stamp
             return;
         }
