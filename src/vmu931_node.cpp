@@ -168,8 +168,8 @@ int main(int argc, char** argv)
     nh_private.getParam("frame_id", frame_id);
     ROS_INFO("Using frame_id '%s' in published messages", frame_id.c_str());
 
-    ros::Publisher pub_imu = nh.advertise<sensor_msgs::Imu>("imu", 50);
-    ros::Publisher pub_mf = nh.advertise<sensor_msgs::MagneticField>("mf", 50);
+    ros::Publisher pub_imu = nh.advertise<sensor_msgs::Imu>("imu", 200);
+    ros::Publisher pub_mf = nh.advertise<sensor_msgs::MagneticField>("mf", 80);
     DeviceThread vmu(device_name, frame_id, pub_imu, pub_mf);
 
     vmu.run();
