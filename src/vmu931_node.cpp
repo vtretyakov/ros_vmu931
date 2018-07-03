@@ -116,6 +116,7 @@ private:
         m_imu_msg.angular_velocity.y = m_sensor_gyro.y * dps;
         m_imu_msg.angular_velocity.z = m_sensor_gyro.z * dps;
 
+        m_imu_msg.orientation.w = m_sensor_quat.w;
         m_imu_msg.orientation.x = m_sensor_quat.x;
         m_imu_msg.orientation.y = m_sensor_quat.y;
         m_imu_msg.orientation.z = m_sensor_quat.z;
