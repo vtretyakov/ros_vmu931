@@ -154,18 +154,16 @@ private:
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "vmu931");
-    ros::NodeHandle nh;
-
-    ros::NodeHandle nh_private("~");
+    ros::NodeHandle nh("~");
     std::string device_name;
-    if (nh_private.getParam("device_name", device_name)) {
+    if (nh.getParam("device_name", device_name)) {
         ROS_INFO("Opening VMU931 at %s", device_name.c_str());
     } else {
         ROS_ERROR("Failed to get parameter 'device_name'");
         return 1;
     }
 
-    std::string frame_id = nh_private.param<std::string>("frame_id", "");
+    std::string frame_id = nh.param<std::string>("frame_id", "");
     ROS_INFO("Using frame_id '%s' in published messages", frame_id.c_str());
 
     ros::Publisher pub_imu = nh.advertise<sensor_msgs::Imu>("imu", 200);
