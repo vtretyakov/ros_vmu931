@@ -164,8 +164,7 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    std::string frame_id;
-    nh_private.getParam("frame_id", frame_id);
+    std::string frame_id = nh_private.param<std::string>("frame_id", "");
     ROS_INFO("Using frame_id '%s' in published messages", frame_id.c_str());
 
     ros::Publisher pub_imu = nh.advertise<sensor_msgs::Imu>("imu", 200);
