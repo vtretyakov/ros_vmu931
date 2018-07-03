@@ -163,11 +163,11 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    std::string frame_id = nh.param<std::string>("frame_id", "");
+    std::string frame_id = nh.param<std::string>("frame_id", "imu_link");
     ROS_INFO("Using frame_id '%s' in published messages", frame_id.c_str());
 
-    ros::Publisher pub_imu = nh.advertise<sensor_msgs::Imu>("imu", 200);
-    ros::Publisher pub_mf = nh.advertise<sensor_msgs::MagneticField>("mf", 80);
+    ros::Publisher pub_imu = nh.advertise<sensor_msgs::Imu>("data", 200);
+    ros::Publisher pub_mf = nh.advertise<sensor_msgs::MagneticField>("mag", 80);
     DeviceThread vmu(device_name, frame_id, pub_imu, pub_mf);
 
     vmu.run();
