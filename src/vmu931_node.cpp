@@ -53,6 +53,7 @@ public:
         m_publisher_imu(pub_imu), m_publisher_mf(pub_mf)
     {
         // TODO set covariance matrices (consult VMU931 user guide and maybe own measurements)
+        // TODO see REP 145 regarding stddev parameters
         m_imu_msg.header.frame_id = frame_id;
         m_mf_msg.header.frame_id = frame_id;
     }
