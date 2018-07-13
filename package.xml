@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>ros_vmu931</name>
-  <version>0.1.0</version>
+  <name>vmu931</name>
+  <version>0.2.0</version>
   <description>VMU931 sensor publishing IMU and MagneticField messages</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
