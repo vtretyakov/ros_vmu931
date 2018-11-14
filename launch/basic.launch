@@ -2,7 +2,7 @@
     <arg name="vmu931_dev" default="$(optenv VMU931_DEV /dev/ttyACM0)" />
     <arg name="vmu931_frame" default="imu_link" />
 
-    <node pkg="ros_vmu931" type="node" name="vmu931">
+    <node pkg="vmu931" type="node" name="vmu931">
         <param name="device_name" value="$(arg vmu931_dev)" />
         <param name="frame_id" value="$(arg vmu931_frame)" />
     </node>
