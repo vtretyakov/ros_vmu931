@@ -52,8 +52,28 @@ public:
         m_sensor(boost::asio::serial_port(m_io_service, device_name)),
         m_publisher_imu(pub_imu), m_publisher_mf(pub_mf)
     {
-        // TODO set covariance matrices (consult VMU931 user guide and maybe own measurements)
-        // TODO see REP 145 regarding stddev parameters
+        // read stddev parameters for covariance matrices (see REP145)
+        ros::NodeHandle nh("~");
+        const double orientation_stddev = nh.param("orientation_stddev", 0.0);
+        m_imu_msg.orientation_covariance[0] = orientation_stddev * orientation_stddev;
+        m_imu_msg.orientation_covariance[4] = orientation_stddev * orientation_stddev;
+        m_imu_msg.orientation_covariance[8] = orientation_stddev * orientation_stddev;
+
+        const double angular_velocity_stddev = nh.param("angular_velocity_stddev", 0.0);
+        m_imu_msg.angular_velocity_covariance[0] = angular_velocity_stddev * angular_velocity_stddev;
+        m_imu_msg.angular_velocity_covariance[4] = angular_velocity_stddev * angular_velocity_stddev;
+        m_imu_msg.angular_velocity_covariance[8] = angular_velocity_stddev * angular_velocity_stddev;
+
+        const double linear_acceleration_stddev = nh.param("linear_acceleration_stddev", 0.0);
+        m_imu_msg.linear_acceleration_covariance[0] = linear_acceleration_stddev * linear_acceleration_stddev;
+        m_imu_msg.linear_acceleration_covariance[4] = linear_acceleration_stddev * linear_acceleration_stddev;
+        m_imu_msg.linear_acceleration_covariance[8] = linear_acceleration_stddev * linear_acceleration_stddev;
+
+        const double magnetic_field_stddev = nh.param("magnetic_field_stddev", 0.0);
+        m_mf_msg.magnetic_field_covariance[0] = magnetic_field_stddev * magnetic_field_stddev;
+        m_mf_msg.magnetic_field_covariance[4] = magnetic_field_stddev * magnetic_field_stddev;
+        m_mf_msg.magnetic_field_covariance[8] = magnetic_field_stddev * magnetic_field_stddev;
+
         m_imu_msg.header.frame_id = frame_id;
         m_mf_msg.header.frame_id = frame_id;
     }
